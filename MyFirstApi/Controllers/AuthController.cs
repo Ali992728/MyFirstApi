@@ -26,14 +26,14 @@ namespace MyFirstApi.Controllers
                 var result = await _authService.LoginUser(userDto);
                 if(result.Item1==0)
                 {
-                    return NotFound(ResponseResult<string>.Failure(null,result.Item2));
+                    return NotFound(ResponseResult<TokenDto>.Failure(result.Item2,result.Item2.Message));
                 }
                 if(result.Item1==1)
                 {
-                    return BadRequest(ResponseResult<string>.Failure(null, result.Item2));
+                    return BadRequest(ResponseResult<TokenDto>.Failure(result.Item2, result.Item2.Message));
                 }
                 
-                return Ok(ResponseResult<string>.Success(null, result.Item2));
+                return Ok(ResponseResult<TokenDto>.Success(result.Item2, result.Item2.Message));
                 
             }
             catch(Exception)
@@ -49,10 +49,17 @@ namespace MyFirstApi.Controllers
             try
             {
                 var result = await _authService.RegisterUser(userDto);
-            }
-            catch(Exception)
-            {
 
+                if(result.Item1==0)
+                {
+                    return Ok(ResponseResult<string>.Failure(null,result.Item2));
+                }
+
+                return Ok(ResponseResult<string>.Success(null, result.Item2));
+            }
+            catch(Exception) 
+            {
+                throw;
             }
         }
     }
