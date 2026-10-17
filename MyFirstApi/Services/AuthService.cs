@@ -42,10 +42,8 @@ namespace MyFirstApi.Services
 
                     return new Tuple<int, TokenDto>(0,tokenDto);
                 }
-                //  if(existingUser.Password!=dto.Password)
-                //  {
-                //      return new Tuple<int, string>(1, "Password Incorrect");
-                //  }
+                
+
 
                 var passwordHasher = new PasswordHasher<string>();
 
@@ -110,14 +108,14 @@ namespace MyFirstApi.Services
 
         private string GetJwtToken(UserDto dto)
         {
-            var claims = new[]
+            var claims = new[]                  //Claims store information about the user inside the JWT token
             {
                 new Claim(ClaimTypes.Name,dto.Name),
                 new Claim(ClaimTypes.Email,dto.Email),
                 new Claim(ClaimTypes.NameIdentifier,dto.Id.ToString())
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("2925475dbc1ecbdc5e6998e3da633df706aa7b7e02c128e2ad7ff458835c270f"));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("2925475dbc1ecbdc5e6998e3da633df706aa7b7e02c128e2ad7ff458835c270f"));   //SymmetricSecurityKey is a class that creates a cryptographic key used to sign and verify JWT tokens.
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -167,7 +165,7 @@ namespace MyFirstApi.Services
         }
 
 
-        private string PasswordHashing(UserDto dto)
+        private string PasswordHashing(UserDto dto)       //UserDto carries the data received from the client, while User is your database entity
         {
             var passwordHasher = new PasswordHasher<string>();
 
