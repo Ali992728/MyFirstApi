@@ -19,7 +19,7 @@ namespace MyFirstApi.Services
             _context = context;
         }
 
-        public async Task<Tuple<int,TokenDto>> LoginUser(UserDto dto)
+        public async Task<Tuple<int,TokenDto>> LoginUser(UserDto dto)          //async->lets us perform asyncronus operations like querying the database without blocking the main thread.
         {
             try
             {
@@ -32,9 +32,9 @@ namespace MyFirstApi.Services
                     return new Tuple<int,TokenDto>(0, tokenDto);
                 }
 
-                var existingUser = await _context.AccountUsers.FirstOrDefaultAsync(x => x.Email == dto.Email); 
-
-                if(existingUser==null)
+                var existingUser = await _context.AccountUsers.FirstOrDefaultAsync(x => x.Email == dto.Email);     //await->Waits for the asynchronous database operation to finish
+                                                                                                                   //FirstOrDefaultAsync->Finds the first matching user or gives null.
+                if (existingUser==null)
                 {
 
                     tokenDto.Message = "This users doesnt exist.Please login";
@@ -115,20 +115,20 @@ namespace MyFirstApi.Services
                 new Claim(ClaimTypes.NameIdentifier,dto.Id.ToString())
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("2925475dbc1ecbdc5e6998e3da633df706aa7b7e02c128e2ad7ff458835c270f"));   //SymmetricSecurityKey is a class that creates a cryptographic key used to sign and verify JWT tokens.
-
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("2925475dbc1ecbdc5e6998e3da633df706aa7b7e02c128e2ad7ff458835c270f"));   //SymmetricSecurityKey is a class that creates a security key from secret key bytes.
+                                                                                                                                              //Encoding.UTF8.GetBytes gives us secret key bytes.
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);                                                           //Encoding class converts string into bytes.
+                                                                                                                                              //UTF8 is text encoding standard.
+            var token = new JwtSecurityToken(                                                                                                 //GetBytes is a method of Encoding class.
                 issuer: "rohan-client",
-                audience: "rohan-backend",
+                audience: "rohan-backend",                                                                                                    //SigningCredentials is a class that combines security key and signing algorithm. 
                 claims: claims,
                 expires: DateTime.Now.AddMinutes(1),
                 signingCredentials: creds
 
                 );
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            return new JwtSecurityTokenHandler().WriteToken(token);                                  //WriteToken() converts the JWT object into a compact token string.
 
         }
 
